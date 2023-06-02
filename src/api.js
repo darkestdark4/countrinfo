@@ -15,3 +15,10 @@ export const searchCountry = async(q) => {
   // sorting data
   return sortDataCountry(countries.data, 'name', 'asc')
 }
+
+export const filterByRegion = async(val) => {
+  const countries = await axios.get(`${baseUrl}/region/${val.name}`)
+
+  // sorting data
+  return sortDataCountry(countries.data, 'name', 'asc')
+}
