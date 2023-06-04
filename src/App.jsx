@@ -133,7 +133,8 @@ const App = () => {
     setSort(sortData[0])
   }
 
-  return <div className="bg-gray-100">
+  return <>
+    <div className="w-screen h-screen bg-gray-100">
     <h2 className="text-center font-bold text-4xl p-7">Country Stuff</h2>
 
     <div className="flex flex-col md:p-20 p-5">
@@ -200,7 +201,7 @@ const App = () => {
           {/*Reset button*/}
           <div>
             <button className="px-4 py-2 border text-sm text-white bg-blue-400 hover:bg-blue-500 drop-shadow-lg"
-              onClick={(e) => resetData()}>Reset</button>
+              onClick={() => resetData()}>Reset</button>
           </div>
         </div>
       </div>
@@ -211,6 +212,7 @@ const App = () => {
       </div>
     </div>
   </div>
+  </>
 }
 
 export default App
