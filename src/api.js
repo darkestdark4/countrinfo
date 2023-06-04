@@ -9,9 +9,7 @@ export const getCountries = async() => {
   return sortDataCountry(countries.data, 'name', 'asc')
 }
 
-export const searchCountry = async(q) => {
-  const countries = await axios.get(`${baseUrl}/name/${q}`)
-
-  // sorting data
-  return sortDataCountry(countries.data, 'name', 'asc')
+export const getCountryByCode = async(code) => {
+  const country = await axios.get(`${baseUrl}/alpha/${code}`)
+  return country.data
 }
