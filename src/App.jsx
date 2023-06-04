@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getCountries } from './api.js'
+import Header from './Header.jsx'
 import CountryList from './components/CountryList.jsx'
 import { Listbox } from '@headlessui/react'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
@@ -134,84 +135,84 @@ const App = () => {
   }
 
   return <>
-    <div className="w-screen h-screen bg-gray-100">
-    <h2 className="text-center font-bold text-4xl p-7">Country Stuff</h2>
+    <div className="w-screen h-screen bg-gray-100 relative">
+      <Header />
 
-    <div className="flex flex-col md:p-20 p-5">
-      <div className="flex justify-between items-center mb-10">
-        {/*Search box*/}
-        <div className="relative flex justify-between items-center">
-          <MagnifyingGlassIcon className="w-4 h-4 absolute z-50 text-gray-500 ml-4"></MagnifyingGlassIcon>
-          <input type="text"
-            className="w-full h-full py-2 pr-4 pl-12 text-sm text-gray-500 caret-gray-500 drop-shadow-lg focus:outline-0 focus:ring-1 focus:ring-gray-300"
-            placeholder="Search"
-            value={keyword}
-            onChange={({ target }) => {
-              modifyCountries('search', target.value)
-            }}
-          />
-        </div>
-        
-        {/*Filter and sort*/}
-        <div className="flex gap-2">
-          {/*Sort by area and population*/}
-          <div className="w-48">
-            <Listbox value={sort}
-              onChange={(selected) => modifyCountries('sort', selected)}
-            >
-              <div className="flex flex-col relative">
-                <Listbox.Button className="bg-white px-4 py-2 text-sm text-left drop-shadow-lg">
-                  {sort.name}
-                </Listbox.Button>
-                <Listbox.Options className="bg-white text-sm absolute top-12 right-0 z-50 w-full drop-shadow-lg">
-                  {sortData.map((sortItem) => (
-                    <Listbox.Option key={sortItem.id} value={sortItem}
-                      className="relative py-2 px-4 my-1 hover:bg-gray-200"
-                    >
-                      {sortItem.name}
-                    </Listbox.Option>
-                  ))}
-                </Listbox.Options>
-              </div>
-            </Listbox>
-          </div>
-          
-          {/*Filter by region*/}
-          <div className="w-40">
-            <Listbox value={filter}
-              onChange={(selected) => modifyCountries('filter', selected)}
-            >
-              <div className="flex flex-col relative">
-                <Listbox.Button className="bg-white px-4 py-2 text-sm text-left drop-shadow-lg">
-                  {filter.name}
-                </Listbox.Button>
-                <Listbox.Options className="bg-white text-sm absolute top-12 right-0 z-50 w-full drop-shadow-lg">
-                  {filterData.map((continent) => (
-                    <Listbox.Option key={continent.name} value={continent}
-                      className="relative py-2 px-4 my-1 hover:bg-gray-200"
-                    >
-                      {continent.name}
-                    </Listbox.Option>
-                  ))}
-                </Listbox.Options>
-              </div>
-            </Listbox>
+      <div className="flex flex-col md:px-20 py-36 p-5">
+        <div className="flex justify-between items-center mb-10">
+          {/*Search box*/}
+          <div className="relative flex justify-between items-center">
+            <MagnifyingGlassIcon className="w-4 h-4 absolute z-40 text-gray-500 ml-4" />
+            <input type="text"
+              className="w-full h-full py-2 pr-4 pl-12 text-sm text-gray-500 caret-gray-500 drop-shadow-lg focus:outline-0 focus:ring-1 focus:ring-gray-300"
+              placeholder="Search"
+              value={keyword}
+              onChange={({ target }) => {
+                modifyCountries('search', target.value)
+              }}
+            />
           </div>
 
-          {/*Reset button*/}
-          <div>
-            <button className="px-4 py-2 border text-sm text-white bg-blue-400 hover:bg-blue-500 drop-shadow-lg"
-              onClick={() => resetData()}>Reset</button>
+          {/*Filter and sort*/}
+          <div className="flex gap-2">
+            {/*Sort by area and population*/}
+            <div className="w-48">
+              <Listbox value={sort}
+                onChange={(selected) => modifyCountries('sort', selected)}
+              >
+                <div className="flex flex-col relative">
+                  <Listbox.Button className="bg-white px-4 py-2 text-sm text-left drop-shadow-lg">
+                    {sort.name}
+                  </Listbox.Button>
+                  <Listbox.Options className="bg-white text-sm absolute top-12 right-0 z-40 w-full drop-shadow-lg">
+                    {sortData.map((sortItem) => (
+                      <Listbox.Option key={sortItem.id} value={sortItem}
+                        className="relative py-2 px-4 my-1 hover:bg-gray-200"
+                      >
+                        {sortItem.name}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </div>
+              </Listbox>
+            </div>
+
+            {/*Filter by region*/}
+            <div className="w-40">
+              <Listbox value={filter}
+                onChange={(selected) => modifyCountries('filter', selected)}
+              >
+                <div className="flex flex-col relative">
+                  <Listbox.Button className="bg-white px-4 py-2 text-sm text-left drop-shadow-lg">
+                    {filter.name}
+                  </Listbox.Button>
+                  <Listbox.Options className="bg-white text-sm absolute top-12 right-0 z-40 w-full drop-shadow-lg">
+                    {filterData.map((continent) => (
+                      <Listbox.Option key={continent.name} value={continent}
+                        className="relative py-2 px-4 my-1 hover:bg-gray-200"
+                      >
+                        {continent.name}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </div>
+              </Listbox>
+            </div>
+
+            {/*Reset button*/}
+            <div>
+              <button className="px-4 py-2 border text-sm text-white bg-blue-400 hover:bg-blue-500 drop-shadow-lg"
+                onClick={() => resetData()}>Reset</button>
+            </div>
           </div>
         </div>
-      </div>
-      
-      {/*Data display*/}
-      <div className="grid gap-12 md:grid-cols-4 sm:grid-cols-2">
-        <CountryList data={countriesModify}></CountryList>
+
+        {/*Data display*/}
+        <div className="grid gap-12 md:grid-cols-4 sm:grid-cols-2">
+          <CountryList data={countriesModify} />
+        </div>
       </div>
     </div>
-  </div>
   </>
 }
 

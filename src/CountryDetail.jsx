@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useLoaderData } from "react-router-dom"
 import { getCountryByCode } from './api.js'
 import { generatePhoneData, numberFormat } from './helpers.js'
@@ -15,8 +16,25 @@ export async function loader({ params }) {
 }
 
 const CountryDetail = () => {
+  const [bordersName, setBordersName] = useState([])
   const { country } = useLoaderData()
   const data = country[0]
+
+  useEffect(() => {
+    testShowBorderName()
+  }, [])
+
+  const testShowBorderName = () => {
+    const borders = data.borders
+    let result = []
+
+    borders.forEach(border => {
+      getCountryByCode(border).then(res => {
+        const name = res[0].name.common
+        result.push(name)
+      })
+    })
+  }
 
   const CoatOfArms = ({ data }) => {
     if(Object.keys(data.coatOfArms).length > 0) {
@@ -69,7 +87,7 @@ const CountryDetail = () => {
     const languages = Object.values(data)
     return languages.map((language, i) => {
       return (<>
-        <Pill key={i} type="standard" bgcolor="bg-gray-300" value={language}/>
+        <Pill key={i} type="standard" bgcolor="bg-gray-300" value={language} />
       </>)
     })
   }
@@ -79,7 +97,7 @@ const CountryDetail = () => {
       <div className="flex flex-col md:p-14 p-5">
         <div>
           <a className="inline-flex items-center border px-4 py-2 bg-white text-sm hover:bg-gray-200 drop-shadow-lg" href={`/`}>
-            <ArrowUturnLeftIcon className="w-4 h-4 mr-2"></ArrowUturnLeftIcon>
+            <ArrowUturnLeftIcon className="w-4 h-4 mr-2" />
             Back
           </a>
         </div>
@@ -87,10 +105,10 @@ const CountryDetail = () => {
           {/*Flag*/}
           <div className="md:mr-20">
             <div className="flex flex-col w-72 mb-10">
-              <img src={ data.flags.png } className=""/>
+              <img src={ data.flags.png } className="" />
               <p className="text-sm text-center mt-1">{ data.name.common } Flag</p>
             </div>
-            <CoatOfArms data={data}></CoatOfArms>
+            <CoatOfArms data={data} />
           </div>
 
           {/*Information*/}
@@ -103,43 +121,43 @@ const CountryDetail = () => {
 
             <div className="mt-10">
               <div className="flex items-center my-3">
-                <BuildingOffice2Icon className="w-4 h-4 mr-2"></BuildingOffice2Icon>
+                <BuildingOffice2Icon className="w-4 h-4 mr-2" />
                 <p className="font-semibold">Capital City :&nbsp;</p>
-                <CapitalData data={data.capital}></CapitalData>
+                <CapitalData data={data.capital} />
               </div>
               <div className="flex items-center my-3">
-                <PhoneIcon className="w-4 h-4 mr-2"></PhoneIcon>
+                <PhoneIcon className="w-4 h-4 mr-2" />
                 <p className="font-semibold">Phone Code :&nbsp;</p>
-                <PhoneData data={data.idd}></PhoneData>
+                <PhoneData data={data.idd} />
               </div>
               <div className="flex items-center my-3">
-                <GlobeAsiaAustraliaIcon className="w-4 h-4 mr-2"></GlobeAsiaAustraliaIcon>
+                <GlobeAsiaAustraliaIcon className="w-4 h-4 mr-2" />
                 <p className="font-semibold">Region :&nbsp;</p>
                 <p>{ data.region }</p>
               </div>
               <div className="flex items-center my-3">
-                <GlobeAsiaAustraliaIcon className="w-4 h-4 mr-2"></GlobeAsiaAustraliaIcon>
+                <GlobeAsiaAustraliaIcon className="w-4 h-4 mr-2" />
                 <p className="font-semibold">Subregion :&nbsp;</p>
                 <p>{ (data.subregion !== undefined) ? data.subregion : '-' }</p>
               </div>
               <div className="flex items-center my-3">
-                <MapIcon className="w-4 h-4 mr-2"></MapIcon>
+                <MapIcon className="w-4 h-4 mr-2" />
                 <p className="font-semibold">Area :&nbsp;</p>
                 <p>{numberFormat(data.area)} km<sup>2</sup></p>
               </div>
               <div className="flex items-center my-3">
-                <GlobeAltIcon className="w-4 h-4 mr-2"></GlobeAltIcon>
+                <GlobeAltIcon className="w-4 h-4 mr-2" />
                 <p className="font-semibold">Domain :&nbsp;</p>
                 <div>
-                  { data.tld.map(tld => {
+                  { data.tld.map((tld, i) => {
                     return (<>
-                      <Pill type="standard" bgcolor="bg-gray-300" value={tld}/>
+                      <Pill key={i} type="standard" bgcolor="bg-gray-300" value={tld} />
                     </>)
                   }) }
                 </div>
               </div>
               <div className="flex items-center my-3">
-                <MapIcon className="w-4 h-4 mr-2"></MapIcon>
+                <MapIcon className="w-4 h-4 mr-2" />
                 <p className="font-semibold">Maps :&nbsp;</p>
                 <Pill type="link" bgcolor="bg-gray-300" value='Google Maps'
                   addprop={{ link: data.maps.googleMaps, hover: 'bg-gray-400' }}
@@ -149,14 +167,20 @@ const CountryDetail = () => {
                 />
               </div>
               <div className="flex flex-wrap items-center my-3">
-                <EllipsisHorizontalCircleIcon className="w-4 h-4 mr-2"></EllipsisHorizontalCircleIcon>
+                <EllipsisHorizontalCircleIcon className="w-4 h-4 mr-2" />
                 <p className="font-semibold">Borders :&nbsp;</p>
-                <BorderData data={data.borders}></BorderData>
+                {console.log(bordersName)}
+                {/*{bordersName.map((border, i) => {
+                  return (<>
+                    <Pill key={i} type="standard" bgcolor="bg-gray-300" value={border} />
+                  </>)
+                })}*/}
+                {/*<BorderData data={data.borders} />*/}
               </div>
               <div className="flex items-center my-3">
-                <LanguageIcon className="w-4 h-4 mr-2"></LanguageIcon>
+                <LanguageIcon className="w-4 h-4 mr-2" />
                 <p className="font-semibold">Language :&nbsp;</p>
-                <LanguageData data={data.languages}></LanguageData>
+                <LanguageData data={data.languages} />
               </div>
             </div>
           </div>
