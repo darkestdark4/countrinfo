@@ -7,7 +7,7 @@ import {
   ArrowUturnLeftIcon, BuildingOffice2Icon,
   PhoneIcon, GlobeAsiaAustraliaIcon,
   MapIcon, GlobeAltIcon, EllipsisHorizontalCircleIcon,
-  LanguageIcon
+  LanguageIcon, UserGroupIcon
 } from "@heroicons/react/24/outline/index.js";
 
 export async function loader({ params }) {
@@ -21,19 +21,33 @@ const CountryDetail = () => {
   const data = country[0]
 
   useEffect(() => {
-    testShowBorderName()
+    getBorderData()
   }, [])
 
-  const testShowBorderName = () => {
+  const getBorderData = () => {
     const borders = data.borders
-    let result = []
-
-    borders.forEach(border => {
-      getCountryByCode(border).then(res => {
-        const name = res[0].name.common
-        result.push(name)
+    
+    if(borders) {
+      borders.forEach(async (border) => {
+        const borderQuery = await getCountryByCode(border)
+        const borderItem = {
+          code: borderQuery[0].cca3,
+          name: borderQuery[0].name.common
+        }
+        
+        setBordersName(prevValues =>
+          (checkSameBorder(prevValues, borderItem) ? [ ...prevValues, borderItem ] : [...prevValues])
+        )
       })
+    }
+  }
+  const checkSameBorder = (data, borderItem) => {
+    const check = data.filter(item => {
+      return item.name === borderItem.name
     })
+    
+    if(check.length === 0) return true
+    return false
   }
 
   const CoatOfArms = ({ data }) => {
@@ -71,25 +85,17 @@ const CountryDetail = () => {
     return <p>-</p>
   }
 
-  const BorderData = ({ data }) => {
+  const LanguageData = ({ data }) => {
     if(data) {
-      return data.map((border, i) => {
+      const languages = Object.values(data)
+      return languages.map((language, i) => {
         return (<>
-          <Pill key={i} type="standard" bgcolor="bg-gray-300" value={border}/>
+          <Pill key={i} type="standard" bgcolor="bg-gray-300" value={language} />
         </>)
       })
     }
-
-    return <p>-</p>
-  }
-
-  const LanguageData = ({ data }) => {
-    const languages = Object.values(data)
-    return languages.map((language, i) => {
-      return (<>
-        <Pill key={i} type="standard" bgcolor="bg-gray-300" value={language} />
-      </>)
-    })
+    
+    return <>-</>
   }
 
   return <>
@@ -116,7 +122,16 @@ const CountryDetail = () => {
             {/*Title*/}
             <div>
               <h3 className="text-3xl font-bold mb-2">{ data.name.common }</h3>
-              <p className="text-sm">{ data.name.official }</p>
+              <p className="text-sm mb-1">{ data.name.official }</p>
+              <p className="text-sm italic text-gray-500">
+                { data.altSpellings.map((item, i) => {
+                  if(data.altSpellings.length === (i+1)) {
+                    return item
+                  }
+                  
+                  return `${item} - `
+                })}
+              </p>
             </div>
 
             <div className="mt-10">
@@ -146,6 +161,11 @@ const CountryDetail = () => {
                 <p>{numberFormat(data.area)} km<sup>2</sup></p>
               </div>
               <div className="flex items-center my-3">
+                <UserGroupIcon className="w-4 h-4 mr-2" />
+                <p className="font-semibold">Population :&nbsp;</p>
+                <p>{numberFormat(data.population)}</p>
+              </div>
+              <div className="flex items-center my-3">
                 <GlobeAltIcon className="w-4 h-4 mr-2" />
                 <p className="font-semibold">Domain :&nbsp;</p>
                 <div>
@@ -160,22 +180,22 @@ const CountryDetail = () => {
                 <MapIcon className="w-4 h-4 mr-2" />
                 <p className="font-semibold">Maps :&nbsp;</p>
                 <Pill type="link" bgcolor="bg-gray-300" value='Google Maps'
-                  addprop={{ link: data.maps.googleMaps, hover: 'bg-gray-400' }}
+                  addprop={{ link: data.maps.googleMaps, hover: 'bg-gray-400', newPage: true }}
                 />
                 <Pill type="link" bgcolor="bg-gray-300" value='OpenStreetMap'
-                  addprop={{ link: data.maps.openStreetMaps, hover: 'bg-gray-400' }}
+                  addprop={{ link: data.maps.openStreetMaps, hover: 'bg-gray-400', newPage: true }}
                 />
               </div>
               <div className="flex flex-wrap items-center my-3">
                 <EllipsisHorizontalCircleIcon className="w-4 h-4 mr-2" />
                 <p className="font-semibold">Borders :&nbsp;</p>
-                {console.log(bordersName)}
-                {/*{bordersName.map((border, i) => {
+                {bordersName.map((border) => {
                   return (<>
-                    <Pill key={i} type="standard" bgcolor="bg-gray-300" value={border} />
+                    <Pill type="link" bgcolor="bg-gray-300" value={border.name}
+                      addprop={{ link: border.code, hover: 'bg-gray-400', newPage: false }}
+                    />
                   </>)
-                })}*/}
-                {/*<BorderData data={data.borders} />*/}
+                })}
               </div>
               <div className="flex items-center my-3">
                 <LanguageIcon className="w-4 h-4 mr-2" />
